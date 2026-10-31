@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BCS ক্যাডার: ঢাকা রান ৩D</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1b2140;--fg:#fff;--ac:#ffd23f;--card:rgba(15,20,45,.9);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1020}}
+:root[data-theme="dark"]{--bg:#0b1020}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:'Hind Siliguri','Noto Sans Bengali',sans-serif;overflow:hidden;touch-action:none;user-select:none}
+canvas{display:block;position:absolute;inset:0}
+#hud{position:absolute;left:0;right:0;top:env(safe-area-inset-top,0px);display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:8px;font-weight:700;font-size:14px;pointer-events:none}
+#hud span{background:var(--card);padding:3px 10px;border-radius:14px}
+#bar{position:absolute;left:10%;right:10%;top:calc(env(safe-area-inset-top,0px) + 62px);height:8px;background:rgba(255,255,255,.25);border-radius:6px;overflow:hidden;pointer-events:none}
+#bar i{display:block;height:100%;width:0;background:var(--ac)}
+#toast{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 80px);transform:translateX(-50%);max-width:80%;text-align:center;background:rgba(15,20,45,.72);color:var(--fg);border:1px solid var(--ac);padding:4px 10px;border-radius:12px;font-weight:700;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none}
+#ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,10,25,.8);padding:16px}
+#box{background:var(--card);border:2px solid var(--ac);border-radius:20px;padding:18px;max-width:430px;text-align:center;max-height:92%;overflow-y:auto}
+#box h1{margin:0 0 6px;font-size:24px;color:var(--ac)}
+#box p{margin:6px 0;font-size:15px;line-height:1.5;white-space:pre-line}
+button{font:700 16px 'Hind Siliguri',sans-serif;background:var(--ac);color:#222;border:0;border-radius:14px;padding:10px 20px;margin:5px 3px;cursor:pointer}
+.opt{display:block;width:100%;background:#2d3a78;color:#fff}
+.small{font-size:13px;opacity:.85}
+#slap{position:absolute;left:50%;top:22%;transform:translate(-50%,0) scale(.6) rotate(-8deg);font-size:54px;font-weight:700;color:#ff4d4d;text-shadow:0 3px 0 #000,0 0 14px #ffd23f;opacity:0;transition:opacity .15s,transform .2s;pointer-events:none;white-space:nowrap}
+#chg{display:none;position:absolute;left:15%;right:15%;bottom:calc(env(safe-area-inset-bottom,0px) + 46px);height:18px;background:rgba(0,0,0,.5);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.4);pointer-events:none}
+#chi{display:block;height:100%;width:100%;background:#2ecc71;transition:background .3s}
+#cht{position:absolute;left:0;right:0;top:0;text-align:center;font-size:12px;line-height:18px;font-weight:700}
+#cm{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);max-width:90%;text-align:center;background:#c0392b;color:#fff;padding:4px 10px;border-radius:10px;font-weight:700;font-size:12px;opacity:0;transition:opacity .3s;pointer-events:none}
+</style></head><body>
+<div id="hud"><span id="s">📍</span><span>📚 <b id="k">0</b></span><span>💰 <b id="m">0</b></span><span id="l"></span><span id="sh"></span><span id="vb" style="pointer-events:auto;cursor:pointer">🔊</span></div>
+<div id="bar"><i id="p"></i></div><div id="toast"></div><div id="cm"></div><div id="slap">চটাস! 💥</div><div id="chg"><i id="chi"></i><b id="cht"></b></div>
+<div id="ov"><div id="box"><h1>🎓 BCS ক্যাডার: ঢাকা রান ৩D</h1>
+<p class="small" style="display:none">🔋 <b>মেধা-চার্জ:</b> দৌড়ালে চার্জ কমে! 📚 বই, 💡 লাইট, 🐟 ইলিশ, ☕ চা কুড়িয়ে চার্জ ধরে রাখো—শেষ হলে দৌড় শেষ! যত বই, তত বেশি দূরের চাকরি।</p><p id="msg">চাকরির মহাদৌড়: বেকার থেকে ধাপে ধাপে BCS ক্যাডার! যত বড় চাকরি, তত সুন্দরী পাত্রী — আর ছোট চাকরি হলে জুতা-পেটা! 👞 পথে আছে ছলনাময়ী মেয়ে 💔, ঘুষ, নেতার তদবির 🗳️! বই আর প্রেমিকার ছাদের লাইটের আলোয় মেধা বাড়াও, প্রেমিকের ঝাড়ি খাও, ঘুষ-কিডনির ফাঁদ এড়াও, শেষে ভাইভা বোর্ডে জবাব দাও!</p>
+<p class="small">⬅️➡️ লেন বদল · ⬆️ লাফ (জ্যাম/সেশনজট) · ⬇️ স্লাইড (প্রশ্নফাঁস ব্যানার)\nফোনে সোয়াইপ করো · রিকশা, বাস, দালাল এড়াতে লেন বদলাও\n🗯️ ঝাড়ি = শিল্ড · ☕ চা = টার্বো · 🧿 মায়ের দোয়া = +১ লাইফ · 📱 ফেসবুক = সব উল্টা! 🙃
+📞 পথে ফোন আসবে, সিদ্ধান্ত তোমার · 💡 লোডশেডিং হবে · 🔥 ৫টা ভালো জিনিসে কম্বো বোনাস</p>
+<button id="go">দৌড় শুরু!</button>
+<p class="small">(কাল্পনিক ব্যঙ্গ — কোনো প্রকৃত ব্যক্তি নয়)</p></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),T3=THREE,B=T3.BoxGeometry,S=T3.SphereGeometry,C=T3.CylinderGeometry;
+const r=new T3.WebGLRenderer({antialias:true});r.setSize(innerWidth,innerHeight);r.setPixelRatio(Math.min(devicePixelRatio,2));document.body.insertBefore(r.domElement,document.body.firstChild);
+const sc=new T3.Scene();sc.background=new T3.Color(0xffc27a);sc.fog=new T3.Fog(0xffc27a,25,85);
+const cam=new T3.PerspectiveCamera(60,innerWidth/innerHeight,.1,200);
+const hemi=new T3.HemisphereLight(0xfff2d0,0x445566,1.1);sc.add(hemi);const sun=new T3.DirectionalLight(0xffffff,.8);sun.position.set(5,10,5);sc.add(sun);
+addEventListener('resize',()=>{r.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
+const M=(c,e)=>new T3.MeshLambertMaterial({color:c,emissive:e||0});
+function ad(g,geo,c,x,y,z,s,e){const m=new T3.Mesh(geo,M(c,e));m.position.set(x,y,z);if(s)m.scale.set(s[0],s[1],s[2]);g.add(m);return m}
+const cache={};
+function tex(e,t,bad){const key=e+t+bad;if(!cache[key]){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.textAlign='center';x.font='110px sans-serif';x.fillText(e,128,115);
+ x.font='bold 30px "Hind Siliguri",sans-serif';const w=Math.min(250,x.measureText(t).width+24);x.fillStyle=bad?'#c0392b':'#1e8449';x.fillRect(128-w/2,150,w,56);x.fillStyle='#fff';x.fillText(t,128,189,240);cache[key]=new T3.CanvasTexture(c)}return cache[key]}
+const spr=(e,t,bad,s)=>{const p=new T3.Sprite(new T3.SpriteMaterial({map:tex(e,t,bad),transparent:true}));p.scale.set(s,s,1);return p};
+function person(o){const g=new T3.Group(),sk=o.skin||0xd9a074;
+ const L=[-.13,.13].map(x=>{const p=new T3.Group();p.position.set(x,.85,0);g.add(p);ad(p,new C(.1,.09,.8,8),o.pants,0,-.4,0);ad(p,new B(.16,.1,.3),0x222222,0,-.82,.05);return p});
+ ad(g,new C(.26,.3,.75,10),o.shirt,0,1.25,0);if(o.girl)ad(g,new C(.3,.45,.7,10),o.shirt,0,.95,0);
+ const A=[-.36,.36].map(x=>{const p=new T3.Group();p.position.set(x,1.55,0);g.add(p);ad(p,new C(.07,.06,.6,8),o.shirt,0,-.3,0);ad(p,new S(.07,8,6),sk,0,-.62,0);return p});
+ ad(g,new C(.07,.08,.12,8),sk,0,1.66,0);ad(g,new S(.22,16,12),sk,0,1.86,0,[1,1.15,1]);
+ [-.08,.08].forEach(x=>ad(g,new S(.03,6,6),0x111111,x,1.9,.19));ad(g,new B(.1,.02,.02),0x7a2e2e,0,1.78,.2);ad(g,new S(.04,6,6),sk,0,1.84,.22);
+ ad(g,new S(.235,14,10,0,6.3,0,1.5),o.hair||0x111111,0,1.89,-.02,[1,1.1,1]);
+ if(o.girl){ad(g,new B(.4,.8,.1),0x111111,0,1.45,-.2);ad(g,new B(.7,.12,.3),o.dup,0,1.5,.02)}
+ if(o.sun)ad(g,new B(.38,.07,.05),0,0,1.9,.21);if(o.mus)ad(g,new B(.14,.03,.03),0x111111,0,1.82,.21);
+ if(o.bag)ad(g,new B(.35,.45,.18),o.bag,0,1.25,-.28);if(o.tie)ad(g,new B(.07,.4,.03),0xcc2222,0,1.3,.27);
+ g.userData={L,A};return g}
+function swing(g,v){const u=g.userData;u.L[0].rotation.x=v;u.L[1].rotation.x=-v;u.A[0].rotation.x=-v;u.A[1].rotation.x=v}
+function wheel(g,x,y,z,rad){const w=ad(g,new C(rad,rad,.12,12),0x111111,x,y,z);w.rotation.z=Math.PI/2}
+function rickshaw(){const g=new T3.Group(),c=[0xe74c3c,0x2ecc71,0xf1c40f,0x9b59b6][Math.random()*4|0];
+ ad(g,new B(1.1,.7,1.6),c,0,.8,0);ad(g,new B(1.15,.1,1.2),0xff9f1a,0,1.75,-.3,null,0x331a00);ad(g,new B(.1,.9,.1),0x555555,-.5,1.3,.4);ad(g,new B(.1,.9,.1),0x555555,.5,1.3,.4);
+ wheel(g,-.6,.4,-.6,.4);wheel(g,.6,.4,-.6,.4);wheel(g,0,.4,1.1,.4);const p=person({shirt:0x6b8e23,pants:0x555555,skin:0xa0714f,hair:0x222222,mus:1});p.position.set(0,.2,1.3);g.add(p);return g}
+function bus(){const g=new T3.Group(),c=[0xd35400,0x16a085,0x2980b9][Math.random()*3|0];
+ ad(g,new B(2.2,2.5,5),c,0,1.55,0);ad(g,new B(2.24,.7,4.4),0x223344,0,2.1,0);ad(g,new B(2.2,.15,5),0xffffff,0,1.0,0);[-1.6,1.6].forEach(z=>{wheel(g,-1.1,.4,z,.45);wheel(g,1.1,.4,z,.45)});return g}
+function barrier(){const g=new T3.Group();ad(g,new B(2,.55,.5),0xdd2222,0,.45,0);ad(g,new B(.5,.57,.52),0xffffff,-.5,.45,0);ad(g,new B(.5,.57,.52),0xffffff,.5,.45,0);return g}
+function banner(){const g=new T3.Group();ad(g,new B(7.6,1,.3),0xc0392b,0,2.4,0,null,0x330000);ad(g,new B(.3,3,.3),0x333333,-3.7,1.5,0);ad(g,new B(.3,3,.3),0x333333,3.7,1.5,0);return g}
+function dalal(){return person({shirt:0x111111,pants:0x111111,sun:1,mus:1,tie:1,skin:0xc99a6e})}
+const road=new T3.Mesh(new T3.PlaneGeometry(9,400),M(0x3b3b44));road.rotation.x=-Math.PI/2;sc.add(road);
+const grass=new T3.Mesh(new T3.PlaneGeometry(120,400),M(0x4c8f4a));grass.rotation.x=-Math.PI/2;grass.position.y=-.02;sc.add(grass);
+const dashes=[];for(let i=0;i<30;i++)for(const x of[-1.2,1.2]){const d=new T3.Mesh(new T3.PlaneGeometry(.22,3),M(0xffffff));d.rotation.x=-Math.PI/2;d.position.set(x,.02,-i*8);sc.add(d);dashes.push(d)}
+const edges=[[-4.35,.2,0xffffff],[4.35,.2,0xffffff],[-5.5,2,0x9a9a9a],[5.5,2,0x9a9a9a]].map(a=>{const m=new T3.Mesh(new T3.PlaneGeometry(a[1],400),M(a[2]));m.rotation.x=-Math.PI/2;m.position.set(a[0],.03,0);sc.add(m);return m});
+const JOBS=[[0,'🥱 বেকার'],[60,'🛺 রিকশার হেলপার'],[130,'🧹 অফিস পিয়ন'],[200,'🏪 দোকান কর্মচারী'],[280,'📦 ডেলিভারিম্যান'],[360,'🎓 প্রাইভেট টিউটর'],[450,'📚 প্রাইমারি শিক্ষক'],[550,'🏦 ব্যাংক কর্মকর্তা'],[650,'💼 কোম্পানি এক্সিকিউটিভ'],[760,'🏢 সরকারি কেরানি'],[880,'👮 পুলিশের এসআই'],[1000,'🧾 কর অফিসার'],[1100,'🎖️ নন-ক্যাডার অফিসার']];const JOBS0=[[0,'🥱 বেকার'],[120,'🏪 দোকান কর্মচারী'],[300,'📚 প্রাইমারি শিক্ষক'],[500,'🏦 ব্যাংক কর্মকর্তা'],[750,'🏢 সরকারি কেরানি'],[1000,'🎖️ নন-ক্যাডার অফিসার']];
+const RD=[[0,'পুরান ঢাকা'],[90,'গুলিস্তান'],[180,'মতিঝিল'],[270,'শাহবাগ'],[360,'কারওয়ান বাজার'],[420,'ফার্মগেট'],[510,'নীলক্ষেত'],[600,'বাংলামোটর'],[690,'ধানমন্ডি'],[780,'মহাখালী'],[830,'সায়েন্সল্যাব'],[900,'সেগুনবাগিচা'],[990,'সচিবালয়'],[1080,'মিরপুর রোড']];
+function roadName(){const d=-player.position.z;let n=RD[0][1];RD.forEach(x=>{if(d>=x[0])n=x[1]});return n}
+function job(){const d=-player.position.z;let j=0;JOBS.forEach((x,i)=>{if(d>=x[0])j=i});return JOBS[j]}
+const PRO=['মেয়ের বাবা: “ছেলেটা উন্নতি করছে!”','প্রেমিকা: “এবার একটু ভালো লাগছে!”','পাড়ার মামা: “আগে তো চিনতামই!”'];
+const ST=[{n:'ঢাকার রাস্তা',sky:0xffc27a,b:[0xd96c4a,0xe7b64b,0x6aa5c9,0xb56fa8],t:['ডাল-ভাত হোটেল','চায়ের দোকান','মেস বাড়ি']},
+ {n:'নীলক্ষেত কোচিং পাড়া',sky:0x9ad0f5,b:[0x4aa3a3,0x7a6fd0,0x5fbf8f,0xd0a24a],t:['স্মার্ট BCS কোচিং','গাইড বই ঘর','১০০% কমন কোচিং']},
+ {n:'ঘুষের অফিসপাড়া',sky:0x8d7aa8,b:[0x777777,0x8a6d5a,0x5d6d7e,0x9c8f7a],t:['ফাইল নড়ে না অফিস','চা-পানি কাউন্টার','দালাল সমিতি']}];
+const blds=[];for(let i=0;i<26;i++){const s=i%2?1:-1,h=4+Math.random()*10,b=ad(sc,new B(5,h,6),0xd96c4a,s*11,h/2,-i*8);const sp=spr('🏢','',0,3.2);sp.position.set(-s*2.6,Math.min(h,5)-1,0);sp.visible=false;b.add(sp);b.userData={sp,s};blds.push(b)}
+const trees=[];for(let i=0;i<26;i++){const s=i%2?1:-1,g=new T3.Group();ad(g,new C(.22,.3,2,8),0x6b4423,0,1,0);ad(g,new S(1.5,10,8),0x2e7d32,0,3.1,0,[1,.9,1]);for(let j=0;j<5;j++)ad(g,new S(.18,6,6),0x2e7d32,Math.cos(j*1.3)*1.2,2.6+j%2*.6,Math.sin(j*1.3)*1.2);g.position.set(s*7.4,0,-i*8-4);sc.add(g);trees.push(g)}
+const crowd=[];for(let i=0;i<12;i++){const s=i%2?1:-1,p=person({shirt:[0xe74c3c,0x27ae60,0xf1c40f,0x8e44ad][i%4],pants:0x333333,skin:[0xd9a074,0xa0714f,0xe0b08a][i%3],girl:i%3===0,dup:0xffffff});p.position.set(s*5.5,0,-i*17);p.rotation.y=-s*1.2;sc.add(p);crowd.push(p)}
+const player=person({shirt:0x2f80ed,pants:0x2b3a67,bag:0xf39c12});sc.add(player);
+const gf=person({shirt:0xe83e8c,pants:0xe83e8c,girl:1,dup:0xffd23f,skin:0xe0b08a});gf.position.set(-6,0,4);gf.rotation.y=Math.PI/2.3;sc.add(gf);
+ad(sc,new C(.1,.1,6,6),0x333333,-5,3,5);const bulb=ad(sc,new S(.45),0xfff3a0,-5,6.3,5,null,0xffee88);const gs=spr('💡','প্রেমিকার ছাদ',0,4);gs.position.set(-5,8.5,5);sc.add(gs);
+const sh=new T3.Mesh(new S(1.3,16,12),new T3.MeshBasicMaterial({color:0xffd23f,transparent:true,opacity:.3}));sh.position.y=1.1;sh.visible=false;player.add(sh);
+const par=[];for(let i=0;i<24;i++){const p=ad(sc,new B(.14,.14,.14),0xffd23f,0,-9,0);p.userData={v:new T3.Vector3(),t:0};par.push(p)}
+function burst(x,y,z,c){let n=0;par.forEach(p=>{if(n<8&&p.userData.t<=0){n++;p.position.set(x,y,z);p.material.color.set(c);p.userData.t=.6;p.userData.v.set((Math.random()-.5)*6,Math.random()*5,(Math.random()-.5)*6)}})}
+const D={book:['📚','বই',0,'পড়ালেখা করছো? বাহ্‌, বিরল দৃশ্য!','গাইড বই কিনে ফেললে? ২০০ টাকা শেষ!','১ পাতা পড়ে ৩ ঘণ্টা ফেসবুক…'],
+ light:['💡','প্রেমিকার লাইট',0,'ছাদের লাইটের আলোয় পড়ে সত্যিই ক্যাডার হওয়া যায়! 💡','রাতের ছাদে চুপিচুপি পড়া… মেধা +২৫!'],
+ jhari:['🗯️','ঝাড়ি',0,'“পড়তে বস!” — প্রেমিকের ঝাড়ি শুনে প্রেমিকা সিরিয়াস! শিল্ড চালু!','ঝাড়ির ভয়ে সব রাস্তা ছেড়ে দিচ্ছে! 🔥'],
+ cash:['💰','ঘুষ',1,'ঘুষের টাকা জমছে… বিবেক কি ঘুমাচ্ছে?','“স্যার, একটু চা-পানি…” 💰'],
+ kid:['🫘','কিডনি',1,'কিডনি বেচে ঘুষ! +৫ টাকা, কিন্তু একটা লাইফ গেল!','“ভাই, একটা কিডনিই তো লাগে!”'],
+ tea:['☕','চা',0,'চা খেয়ে ৪ সেকেন্ড টার্বো স্পিড! ⚡','এক কাপ চায়ে বিসিএস প্রস্তুতি সম্পূর্ণ! মেধা +৫'],
+ kacchi:['🍛','কাচ্চি',0,'প্রেমিকার সাথে কাচ্চি ডেট! ❤️ +১ লাইফ','কাচ্চি খেয়ে নতুন প্রাণ! ❤️ +১'],
+ fb:['📱','ফেসবুক',1,'ফেসবুকে ঢুকে গেলে! ৫ সেকেন্ড সব উল্টা! 🙃','“১ মিনিট দেখি” — ৩ ঘণ্টা শেষ! 🙃']};
+const OB={rick:['🛺 রিকশাওয়ালা মামা বলে “দেখে চলেন ভাই!”','রিকশার ঘণ্টায় কান ঝালাপালা!'],bus:['😵 লোকাল বাসের ধাক্কা! “মামা সামনে যান!”','বাসের হেল্পার চিৎকার করছে “গুলিস্তান!”'],
+ bar:['ঢাকার জ্যামে/সেশনজটে আটকে গেলে!','সেশনজটে ডিগ্রি ৮ বছরে!'],ban:['📄 প্রশ্নফাঁস! পরীক্ষা বাতিল!','ফেসবুকে প্রশ্ন ভাইরাল — সব পণ্ড!'],dal:['🕴️ দালাল ঘুষের অর্ধেক নিয়ে পালাল!','“চাকরি ফিক্স ভাই!” — টাকা গায়েব!'],
+ gfc:['💔 “জান, ২ হাজার টাকা ধার দাও” — টাকা নিয়ে ব্লক!','ছলনাময়ী মেয়ে বলল “তুমি আমার ভাই” — মেধা চুরমার!'],pol:['🗳️ নেতা: “কোটার তদবির লাগবে? মিছিলে চলো!”','মিছিলে আটকে গেলে! নেতা বলে “ভাই, ভোট দিও!”']};
+const FIN=1200,lanes=[-2.4,0,2.4],pick=a=>a[Math.random()*a.length|0];
+let st={run:0},list=[],nextZ,toastT,aud,wedG,wd=0;
+function toast(s){const t=$('toast');t.textContent=s;t.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>t.style.opacity=0,2300)}
+function beep(f,d,ty){try{aud=aud||new(window.AudioContext||window.webkitAudioContext)();const o=aud.createOscillator(),g=aud.createGain();o.type=ty||'square';o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(aud.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,aud.currentTime+d);o.stop(aud.currentTime+d)}catch(e){}}
+function hud(){$('k').textContent=st.k;$('m').textContent=st.m;$('l').textContent='❤️'.repeat(Math.max(st.l,0))||'💔';$('sh').textContent=(st.sh>0?'🗯️ '+Math.ceil(st.sh)+'s ':'')+(st.boost>0?'☕⚡ ':'')+(st.rev>0?'🙃 উল্টা!':'');$('s').textContent=job()[1]+' · '+roadName()+' · বয়স '+(25+(-player.position.z/FIN*5)).toFixed(1);$('p').style.width=Math.min(100,-player.position.z/FIN*100)+'%';$('chi').style.width=Math.max(0,st.ch)+'%';$('chi').style.background=st.ch<25?'#e74c3c':st.ch<55?'#f1c40f':'#2ecc71';$('cht').textContent='📚 মেধা-চার্জ '+Math.round(st.ch)+'%'}
+function skin(i){const S1=ST[i];blds.forEach((b,j)=>{b.material.color.set(S1.b[j%4]);b.userData.sp.material.map=tex('🏢',S1.t[j%3],0)});sc.background.set(S1.sky);sc.fog.color.set(S1.sky)}
+function addO(k,mesh,ln,z,d,lbl){mesh.position.set(lanes[ln],0,z);sc.add(mesh);if(lbl){const l=spr(lbl[0],lbl[1],1,1.7);l.position.y=3.3;mesh.add(l)}list.push({k,o:mesh,ln,z,d,t:'o',v:k==='bus'?st.stg*2.5:k==='rick'?st.stg*1.2:0,sw:st.stg>=1&&(k==='dal'||k==='pol'||k==='cow')?1:0})}
+function spawn(z){const t=['rick','rick','bus','bar','ban','dal','gfc','gfc','pol'][Math.random()*9|0],ln=Math.random()*3|0;
+ if(t==='rick')addO(t,rickshaw(),ln,z,1.6);if(t==='bus')addO(t,bus(),ln,z,2.8);if(t==='dal')addO(t,dalal(),ln,z,.9,['🕴️','দালাল']);
+ if(t==='cow')addO(t,cow(),ln,z,1.2,['🐄','গরু']);
+ if(t==='gfc')addO(t,person({shirt:0xff69b4,pants:0x111111,girl:1,dup:0xc0392b,skin:0xe0b08a}),ln,z,.9,['💔','ছলনাময়ী']);
+ if(t==='pol')addO(t,person({shirt:0xffffff,pants:0xffffff,sun:1,mus:1,skin:0xb98b64}),ln,z,.9,['🗳️','নেতা']);
+ if(t==='bar'){addO(t,barrier(),ln,z,.5,['🚧','জ্যাম/সেশনজট']);if(Math.random()<.5)addO(t,barrier(),(ln+1)%3,z,.5)}
+ if(t==='ban'){addO(t,banner(),1,z,.3,['📄','প্রশ্নফাঁস']);list[list.length-1].o.position.x=0;list[list.length-1].all=1}
+ const k=pick(['book','book','book','light','jhari','cash','kid','tea','kacchi','fb','ilish','ilish']),cl=(ln+1+(Math.random()*2|0))%3,d=D[k],s=spr(d[0],d[1],d[2],1.9);s.position.set(lanes[cl],1.6,z-6);sc.add(s);list.push({k,o:s,ln:cl,z:z-6,d:1,t:'c'})}
+function reset(){list.forEach(i=>sc.remove(i.o));list=[];st={ch:100,cb:0,hits:0,ev:0,dark:0,dt:20,boost:0,rev:0,ct:5,k:0,m:0,l:3,j:0,kd:0,sp:15,ln:1,x:0,y:0,vy:0,sl:0,sh:0,inv:0,stg:0,run:1,shake:0,t:0};rain.visible=false;wd=0;if(wedG)sc.remove(wedG);player.position.set(0,0,0);player.rotation.set(0,Math.PI,0);player.scale.set(1,1,1);nextZ=-30;skin(0);hemi.intensity=1.1;sc.fog.far=200;hud()}
+function hit(e){const k=e.k;if(e.t==='c'){const d=D[k];if(k==='book')st.k+=10;if(k==='light')st.k+=25;if(k==='jhari'){st.k+=30;st.j++;st.sh=4}if(k==='cash')st.m++;if(k==='kid'){st.m+=5;st.l--;st.kd++;st.shake=.4}if(k==='ilish')st.k+=8;if(k==='tea'){st.k+=5;st.boost=4}if(k==='kacchi')st.l=Math.min(5,st.l+1);if(k==='fb'){st.rev=5;st.shake=.3}
+  st.ch=Math.min(100,st.ch+({book:12,light:25,tea:10,kacchi:15,jhari:10,ilish:25,fuchka:8}[k]||0));if(k==='fb')st.ch=Math.max(0,st.ch-15);if(d[2])st.cb=0;const cmb=!d[2]&&++st.cb%5===0;if(cmb)st.k+=15;toast(pick(d.slice(3))+(cmb?' 🔥 কম্বো ×'+st.cb+' বোনাস +১৫!':''));beep(k==='kid'?150:600+st.cb*40,.15);burst(e.o.position.x,1.5,e.o.position.z,d[2]?0xff5555:0xffd23f);sc.remove(e.o);e.dead=1}
+ else{if(st.inv>0||st.sh>0)return;if(k==='bar'&&st.y>.8)return;if(k==='ban'&&st.sl>0)return;if(k==='gfc'){gfcScene(e);return}
+  st.l--;st.inv=1.3;st.shake=.5;st.cb=0;st.hits++;if(k==='dal')st.m=st.m>>1;if(k==='gfc'){st.m=Math.max(0,st.m-2);st.k=Math.max(0,st.k-10)}if(k==='pol')st.k=Math.max(0,st.k-15);toast(pick(OB[k]),1);beep(110,.3,'sawtooth');if(k==='dal'){const pr=String(5+Math.max(0,JOBS.indexOf(job()))*2).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]),tx='মামা, '+pr+' লাখে চাকরি কনফার্ম!';toast('🕴️ দালাল: “'+tx+'”',1);speak(tx,1,'m')}}
+ hud();if(st.l<=0)end('over')}
+function gfcScene(e){st.run=0;st.cb=0;e.o.position.set(player.position.x,0,player.position.z-1.3);if(e.o.userData.A)e.o.userData.A[1].rotation.z=2.6;beep(900,.25,'sine');const m=st.m,b=$('box');
+ b.innerHTML='<h1>💘 ছলনাময়ীর সাথে ধাক্কা!</h1><p>👩 “I love you জান! ❤️”\n(আদর করে সব টাকা কেড়ে নিয়ে পালাল 💨)\n\n💰 '+m+' টাকা গায়েব · ⏳ চাকরির ১ বছর গেল!</p><button id="gc">আবার দৌড়! 🏃</button>';
+ $('ov').style.cssText='display:flex;align-items:flex-end;background:rgba(8,10,25,.12)';b.style.maxHeight='50%';speak('I love you জান! সব টাকা দিয়ে দাও!',1);
+ $('gc').onclick=()=>{st.m=0;player.position.z=Math.min(0,player.position.z+240);list.forEach(i=>sc.remove(i.o));list=[];nextZ=player.position.z-30;st.jn=job();st.inv=2;$('ov').style.cssText='display:none';b.style.maxHeight='';st.run=1;hud();toast('💔 টাকা গেল, ১ বছর পিছিয়ে গেলে! আবার দৌড়!',1);beep(440,.2)}}
+function end(w){st.run=0;let h,s;if(w==='over'){h='💔 চাকরির বয়স শেষ!';s='বয়স ৩০ পেরিয়ে গেল, আবেদন বাতিল। সবাই বলছে “আমি তো আগেই বলেছিলাম!”';fin(h,s);return}
+ viva()}
+const Q=[['আপনি সরকারি চাকরি কেন করতে চান?',['দেশসেবা করতে চাই',2],['শ্বশুরবাড়ির চাপে 😅',1],['উপরি ইনকামের জন্য 🤫',0]],
+ ['ঘুষ নেওয়া কি উচিত?',['কখনোই না!',2],['আমার কিডনি গেছে, ফেরত লাগবে',1],['চা-পানি তো সংস্কৃতি 🍵',0]],
+ ['প্রেমিকা ক্যাডার হলে আপনি কী করবেন?',['গর্বিত হব, ব্যাগ ধরব 👜',2],['আমি তো আগেই ঝাড়ি দিয়েছিলাম',1],['আমিও পরের বার দেব',1]]];
+function viva(){let q=0,sc2=0;const b=$('box');$('ov').style.display='flex';(function nx(){if(q>=3){fin2(sc2);return}
+ b.innerHTML='<h1>🧑‍⚖️ ভাইভা বোর্ড</h1><p>প্রশ্ন '+(q+1)+'/৩</p><p><b>'+Q[q][0]+'</b></p>';
+ Q[q].slice(1).forEach(o=>{const x=document.createElement('button');x.className='opt';x.textContent=o[0];x.onclick=()=>{sc2+=o[1];q++;beep(500,.1);nx()};b.appendChild(x)})})()}
+function fin2(v){const sc3=st.k+v*15;let h,s;
+ if(st.j>=2&&sc3>=100){h='👩‍⚖️ প্রেমিকাই BCS ক্যাডার!';s='প্রেমিকের ঝাড়ি খেয়ে প্রেমিকা ক্যাডার হয়ে গেল! এখন তুমি তার ব্যাগ ধরে পিছে হাঁটো 👜😂'}
+ else if(st.m>=6&&sc3<190){h=st.kd?'💸 ঘুষে চাকরি, কিডনিও লোপাট!':'🚨 ঘুষে চাকরি, তারপর দুদক!';s=st.kd?'চাকরি পেলে ঠিকই, কিন্তু কিডনি আর টাকা দুটোই গেল। বেতনের সবটা লোন শোধে! 😭':'চাকরি তো পেলে, কিন্তু প্রথম মাসেই ফেসবুকে ভাইরাল! 😬'}
+ else if(sc3>=190){h='🎉 মেধায় BCS ক্যাডার!';s='প্রেমিকার ছাদের লাইটের আলোয় পড়ে ক্যাডার! বিয়ের কার্ডে “সহকারী কমিশনার” লেখা হবে 😎'}
+ else if(sc3>=100){h='😅 ভাইভায় আটকে গেলে';s='ঘেমে নেয়ে ভাইভা শেষ। আগামী বিসিএসে দেখা হবে — বয়স ৩০ হতে আর ৩ মাস!'}
+ else{h='☕ ফেল! চায়ের দোকানই ভরসা';s='“ভাই, একটা চা দেন” — এখন BCS গাইড ছেড়ে চায়ের দোকানই মূল চাকরি!'}
+ const ti=st.hits>=4?'🚧 জ্যামের স্থায়ী বাসিন্দা':st.kd?'🫘 এক-কিডনি যোদ্ধা':st.m>=6?'💰 চা-পানি বিশেষজ্ঞ':st.j>=2?'🗯️ ঝাড়ি-প্রুফ মানব':'📚 গাইড বইয়ের ভক্ত';let bs=0;try{bs=+localStorage.bcs||0;if(sc3>bs){localStorage.bcs=sc3;bs=sc3}}catch(e){}
+ fin(h,s+'\n\n📚 '+st.k+' · 💰 '+st.m+' · ভাইভা '+v+'/৬\n🏅 উপাধি: '+ti+'\n⭐ স্কোর '+sc3+' (সেরা '+bs+')')}
+function wed(ty){wd=ty;wedG=new T3.Group();const z=player.position.z,q={good:[0xc0392b,0xffd23f],mid:[0x3498db,0xeeeeee],shoe:[0x7f8c8d,0x555555]}[ty];
+ const b=person({shirt:q[0],pants:q[0],girl:1,dup:q[1],skin:0xe0b08a});b.position.set(.7,0,z);b.rotation.y=-.3;
+ const f=person({shirt:0xf5f5f5,pants:0x222222,mus:1,skin:0xa0714f,hair:0xaaaaaa});f.position.set(2.2,0,z);f.rotation.y=-.5;
+ wedG.add(b,f);wedG.userData={b,f};sc.add(wedG);if(ty==='shoe')ad(b.userData.A[1],new B(.14,.1,.4),0x5a3a1a,0,-.7,.15);
+ player.scale.set(1,1,1);player.position.x=-.7;player.rotation.set(0,.3,0);player.visible=true;slapShake=0;rc=0}
+const GAL=["তুই একটা ফকিন্নি! বেকার ভিখারি, তকে বিয়ে করব না!", "রিকশার হেলপার? তুই একটা ফকিন্নি! যা, রিকশার হ্যান্ডেল ধর গিয়া, তকে বিয়ে করব না!", "পিয়ন? চায়ের কাপ বওয়া ছাড়া তুই কিছু পারিস? ফকিন্নি কোথাকার, তকে বিয়ে করব না!", "পরের দোকানে মাল গুনিস, আমারে খাওয়াবি কী দিয়ে? তুই একটা ফকিন্নি, তকে বিয়ে করব না!", "অন্যের পার্সেল পৌঁছাস, আমার জন্য আনবি কী? হাওয়া? ফকিন্নি! তকে বিয়ে করব না!", "দুই হাজারের টিউশনি করে বিয়ের শখ? তুই একটা ফকিন্নি মাস্টর, তকে বিয়ে করব না!", "প্রাইমারির স্যার! বেতনে ডাল-ভাতও জোটে না, তুই ফকিন্নি! তকে বিয়ে করব না!", "অন্যের টাকা গুনিস আর নিজের পকেট ফাঁকা! তুই একটা ফকিন্নি, তকে বিয়ে করব না!", "টাই পরলেই সাহেব হয় না রে! তুই একটা ফকিন্নি এক্সিকিউটিভ, তকে বিয়ে করব না!", "ফাইল নড়াতে বছর পার, আমার জন্য সময় কই? ফকিন্নি কেরানি! তকে বিয়ে করব না!", "এসআই হয়ে আমারে ধরবি? আগে ক্যাডার হ, তুই একটা ফকিন্নি! তকে বিয়ে করব না!", "অন্যের কর ধরিস, নিজের কপাল ধরতে পারিস না! ফকিন্নি! তকে বিয়ে করব না!", "ক্যাডার হতে পারলি না, তুই একটা ফকিন্নি অফিসার! তকে বিয়ে করব না!"];
+function fin(h,s){const ji=Math.max(0,JOBS.indexOf(job())),ty=/মেধায়|প্রেমিকাই/.test(h)?'good':/ঘুষে|ভাইভায়/.test(h)?'mid':'shoe';wed(ty);const gl=GAL[ji];
+ const L={good:'👨 মেয়ের বাবা সুন্দরী মেয়েকে নিয়ে এসে তোমার হাতে তুলে দিলেন: “আজ থেকে ও তোমার!” 💍',mid:'👰 মেয়ের বাবা: “চাকরি আছে, তবে… মেয়ে মোটামুটি রাজি।” 😐',shoe:'👞 মেয়ে জুতা হাতে তেড়ে এসে জুতা-পেটা শুরু করল!\n“'+gl+'”'};
+ const jb=ty==='good'?'🎖️ BCS ক্যাডার':/ঘুষে/.test(h)?'🏢 ঘুষের চাকরি':job()[1];
+ $('box').innerHTML='<h1>'+h+'</h1><p>💼 চাকরি: <b>'+jb+'</b>\n'+L[ty]+'\n\n'+s+'</p><button id="go">আবার চেষ্টা!</button>';$('box').style.maxHeight='50%';$('go').onclick=start;$('ov').style.cssText='display:flex;align-items:flex-end;background:rgba(8,10,25,.12)';if(ty==='shoe')speak(gl,1,'f')}
+function start(){reset();$('ov').style.cssText='display:none';$('box').style.maxHeight='';toast('দৌড় শুরু! প্রেমিকা বলছে “পড়তে বস!”');beep(440,.2)}
+$('go').onclick=intro;
+function intro(){const C=[['🎓','তুমি: সদ্য পাস করা গ্র্যাজুয়েট।\nসার্টিফিকেট ✅ চাকরি ❌'],['📰','সার্কুলার: ১০টা পদ!\nআবেদন এসেছে ১ লাখ ২০ হাজার! 😱'],['👨','বাবা: “আমার ছেলে ডিসি হবে!”\n(পাড়ায় অলরেডি বলে দিয়েছি)'],['👩','প্রেমিকা: “চাকরি না হলে বিয়ে নাই,\nআর ঝাড়ি ফ্রি!”'],['🕴️','দালাল: “ভাই, রেট ২ লাখ।\nকিডনি বেচলেও হবে!”'],['🧓','পাড়ার চাচা: “আমাদের সময় তো\nএক ডাকেই চাকরি পেতাম!”'],['📱','ফেসবুক: “চাকরির বাজারে স্বাগতম 🙏”\nআজ থেকে তুমি আনুষ্ঠানিক বেকার!'],['🏃','নামো চাকরির বাজারে!\nবেকার থেকে BCS ক্যাডার হও 🎖️']];let i=0;const b=$('box');(function sh(){b.innerHTML='<div style="font-size:64px">'+C[i][0]+'</div><p><b>'+C[i][1]+'</b></p><button id="nx">'+(i<C.length-1?'পরের →':'🚀 নামলাম!')+'</button>';speak(C[i][1],1,'n');$('nx').onclick=()=>{if(++i<C.length)sh();else start()}})()}
+function mv(d){if(st.run)st.ln=Math.max(0,Math.min(2,st.ln+(st.rev>0?-d:d)))}
+function jmp(){if(st.run&&st.y<.05){st.vy=9;beep(800,.1)}}function sld(){if(st.run){st.sl=.7;if(st.y>.05)st.vy=-12}}
+addEventListener('keydown',e=>{const k=e.key;if(k==='ArrowLeft'||k==='a')mv(-1);if(k==='ArrowRight'||k==='d')mv(1);if(k==='ArrowUp'||k==='w'||k===' ')jmp();if(k==='ArrowDown'||k==='s')sld()});
+let sx,sy;addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{if(e.target.closest('#ov,#vb'))return;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+ if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>30)dy<0?jmp():sld();else if(Math.abs(dx)>30)mv(dx>0?1:-1);else mv(e.changedTouches[0].clientX<innerWidth/2?-1:1)});
+const COM=['🎙️ ভাইভা বোর্ড: “দৌড়াচ্ছেন কেন? চাকরি তো ৩ বছর পরে!”','📞 প্রেমিকা: “জান, পড়ছো তো? ছবি পাঠাও!”','🎙️ রিকশামামা: “ভাই সরেন, সরকারি চাকরি যাচ্ছে!”','👵 মা: “বাবু, ভাত খেয়ে নে — বিসিএস পরে!”','📱 ফেসবুক: “১ লাখ লাইক পেলে ক্যাডার!”','🧑‍🏫 কোচিং স্যার: “১০০% কমন! এইবার সত্যি!”','👨 বাবা: “আমার ছেলে ডিসি হবে, পাড়ায় বলে দিয়েছি!”','📞 দালাল: “ভাই, রেট এখন ২ লাখ, কালকে ৩!”','🎙️ প্রতিবেশী: “অমুকের ছেলে তো ক্যাডার, তুমি?”'];let cmT;
+function say(s){const c=$('cm');c.textContent=s;c.style.opacity=1;clearTimeout(cmT);cmT=setTimeout(()=>c.style.opacity=0,3500);try{if(window.speechSynthesis&&speechSynthesis.getVoices().some(v=>v.lang.startsWith('bn'))){const u=new SpeechSynthesisUtterance(s.replace(/[^\u0980-\u09FF ,।?!“”]/g,''));u.lang='bn-BD';speechSynthesis.speak(u)}}catch(e){}}
+const EV=[['📞 প্রেমিকা: “জান, কাচ্চি খাওয়াবা?”',['খাওয়াবো জান! (-১০ মেধা, +১ ❤️)',()=>{st.k=Math.max(0,st.k-10);st.l=Math.min(5,st.l+1)}],['পড়তে বসছি! (+১৫ মেধা)',()=>{st.k+=15}]],
+['🕴️ দালাল: “ভাই, চাকরি ফিক্স! মাত্র ২ লাখ!”',['দিয়ে দিই (+৩ 💰, -১৫ মেধা)',()=>{st.m+=3;st.k=Math.max(0,st.k-15)}],['না ভাই! (+১০ মেধা, শিল্ড)',()=>{st.k+=10;st.sh=4}]],
+['👨 বাবা: “বিসিএস না হলে বিয়ে হবে না!”',['চাপ নিলাম (+২০ মেধা, -১ ❤️)',()=>{st.k+=20;st.l--}],['বিয়েই লাগবে না! (৫ সেকেন্ড টার্বো)',()=>{st.boost=5}]]];
+EV.push(['🎓 ভাইভা প্র্যাকটিস: বাংলাদেশের রাজধানী কোথায়?',['ঢাকা! (+২৫ মেধা)',()=>{st.k+=25}],['চট্টগ্রাম, জ্যামে আটকে (-১ ❤️)',()=>{st.l--}]],['🧑‍🤝‍🧑 বন্ধু: “চল ক্রিকেট দেখি, বিসিএস তো কাল!”',['দেখি ভাই! (-২০ মেধা, +১ ❤️)',()=>{st.k=Math.max(0,st.k-20);st.l=Math.min(5,st.l+1)}],['না, পড়ব! (+১৫ মেধা)',()=>{st.k+=15}]],['🏫 পরীক্ষার হলে পাশের জন: “ভাই, ২ নম্বরটা?”',['দেখাই (+২ 💰, -১ ❤️)',()=>{st.m+=2;st.l--}],['না ভাই! (+১৫ মেধা, শিল্ড)',()=>{st.k+=15;st.sh=4}]]);
+const EVD=[160,320,480,640,800,960,1060,1140];
+function ev(){const e=EV[st.ev%EV.length];st.ev++;st.run=0;const b=$('box');b.innerHTML='<h1>📲 ইনকামিং কল!</h1><p><b>'+e[0]+'</b></p>';[e[1],e[2]].forEach(o=>{const x=document.createElement('button');x.className='opt';x.textContent=o[0];x.onclick=()=>{o[1]();$('ov').style.display='none';st.run=1;hud();if(st.l<=0)end('over');beep(520,.12)};b.appendChild(x)});$('ov').style.display='flex';beep(900,.3,'sine')}
+let mute=0;
+function speak(s){if(mute||!window.speechSynthesis)return;try{const x=s.replace(/[^\u0980-\u09FF0-9a-zA-Z ,।?!]/g,' ').replace(/\s+/g,' ').trim();if(!x)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(x);u.lang='bn-BD';u.rate=1.05;const v=speechSynthesis.getVoices().find(v=>/^bn/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+function toast(s){const t=$('toast');t.textContent=s;t.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>t.style.opacity=0,1800);speak(s)}
+function say(s){const c=$('cm');c.textContent=s;c.style.opacity=1;clearTimeout(cmT);cmT=setTimeout(()=>c.style.opacity=0,3500);speak(s)}
+$('vb').onclick=()=>{mute=!mute;$('vb').textContent=mute?'🔇':'🔊';if(mute&&window.speechSynthesis)speechSynthesis.cancel()};
+let VO=null;function pickV(){const vs=speechSynthesis.getVoices();return vs.find(v=>/^bn/i.test(v.lang))||vs.find(v=>/^hi/i.test(v.lang))||null}
+try{speechSynthesis.onvoiceschanged=()=>{VO=pickV()}}catch(e){}
+function speak(s){if(mute||!window.speechSynthesis)return;try{let x=s.replace(/[^\u0980-\u09FF0-9a-zA-Z ,।?!]/g,' ').replace(/\s+/g,' ').trim();if(!x)return;VO=VO||pickV();const bn=VO&&/^bn/i.test(VO.lang);if(!bn)x=x.replace(/[\u0980-\u09FF]/g,c=>String.fromCharCode(c.charCodeAt(0)-128));speechSynthesis.cancel();setTimeout(()=>{const u=new SpeechSynthesisUtterance(x);u.lang=bn?'bn-BD':'hi-IN';if(VO)u.voice=VO;speechSynthesis.speak(u)},60)}catch(e){}}
+$('vb').onclick=()=>{mute=!mute;$('vb').textContent=mute?'🔇':'🔊';if(mute)speechSynthesis.cancel();else speak('ভয়েস চালু হয়েছে')};
+const rg=new T3.BufferGeometry(),rp=new Float32Array(900);for(let i=0;i<300;i++){rp[i*3]=(Math.random()-.5)*20;rp[i*3+1]=Math.random()*12;rp[i*3+2]=(Math.random()-.5)*30}rg.setAttribute('position',new T3.BufferAttribute(rp,3));const rain=new T3.Points(rg,new T3.PointsMaterial({color:0xaaccff,size:.12}));rain.visible=false;sc.add(rain);
+COM.push('🎙️ কোচিং স্যার: “আজকের ক্লাসে পড়া নাই, শুধু মোটিভেশন!”','📞 মামা: “ভাগ্নে, তোর জন্য একটা সম্বন্ধ আছে… চাকরি হলে!”','🎙️ চায়ের দোকানদার: “বাকি আর দিমু না ভাই!”','📱 হোয়াটসঅ্যাপ গ্রুপ: “প্রশ্ন পেয়ে গেছি!” (ভুয়া)','🎙️ রিকশাওয়ালা: “ভাই, সরকারি চাকরি পাইলে আমারে মনে রাখবেন!”','👵 দাদি: “আমার নাতি ম্যাজিস্ট্রেট হবে!”');
+function cow(){const g=new T3.Group();ad(g,new B(1.1,.9,2),0x8b5a2b,0,1.1,0);ad(g,new B(.7,.7,.8),0x8b5a2b,0,1.5,1.2);ad(g,new B(.5,.3,.3),0xf0d0b0,0,1.35,1.65);[-.4,.4].forEach(x=>{[-.7,.7].forEach(z=>ad(g,new B(.2,.7,.2),0x5a3a1a,x,.35,z));ad(g,new B(.1,.3,.1),0xffffff,x*.8,2,1.2)});ad(g,new B(.5,.5,.1),0xffffff,.3,1.2,.01);return g}
+D.ilish=['🐟','ইলিশ',0,'ইলিশ ভাজা! দাম ৩০০০ টাকা, তবু চার্জ +২৫!','পদ্মার ইলিশ খেয়ে পুরো চাঙ্গা! 🐟'];
+D.mango=['🥭','আম',0,'রাজশাহীর ল্যাংড়া আম! মেধা +৮','আম খেয়ে মাথা ঠান্ডা!'];
+D.fuchka=['🥟','ফুচকা',0,'ফুচকা খেয়ে মুখ ঝাল! চার্জ +৮','“মামা, আরেকটা দেও!” 🥟'];
+OB.cow=['🐄 কোরবানির গরুর ধাক্কা! “আমি এখনো কোরবানি হইনি!”','গরু রাস্তা পার হচ্ছে — সামনে দাঁড়ানো মানেই বিপদ!'];
+EV.push(['📰 সার্কুলার: “বিসিএস আবেদন ফি ৭০০ টাকা!”',['আবেদন করি (+২০ মেধা, -১ 💰)',()=>{st.k+=20;st.m=Math.max(0,st.m-1)}],['পরের বার দেখব (+২০ চার্জ)',()=>{st.ch=Math.min(100,st.ch+20)}]],['🐄 ঈদ আসছে! বাবা: “গরু কিনতে যাবি?”',['যাই! (-১৫ মেধা, +২৫ চার্জ)',()=>{st.k=Math.max(0,st.k-15);st.ch=Math.min(100,st.ch+25)}],['পড়তে বসি (+১৫ মেধা)',()=>{st.k+=15}]]);
+COM.push('📺 ব্রেকিং: সরকারি চাকরির প্রস্তুতি নিচ্ছে ৩০ লাখ বেকার!','📺 ব্রেকিং: ঢাকায় ২ কিমি রাস্তা ২ ঘণ্টায়!','📺 ব্রেকিং: ইলিশের দাম আবার বাড়ল, কিনলেই নামে প্রেম সম্পর্ক!','👴 পাড়ার চাচা: “বয়স কত হলো? বিয়ে কবে?”','💍 ঘটক: “পাত্র চাই, সরকারি চাকরিজীবী, ক্যাডার হলে ভালো!”');
+D.book.push('গাইড বইয়ের দাম বেড়েছে, তবু কিনলে!','“জেনারেল নলেজ” মুখস্থ করতে করতে ঘুম! 😴','এক সপ্তাহে ৫ কোচিং — মাথা ঘুরছে!');
+D.light.push('প্রেমিকা ছাদ থেকে টর্চ মারছে — পড়তে হবে!','লাইটের আলোয় পড়তে গিয়ে মশার কামড়ও ফ্রি! 🦟');
+D.jhari.push('প্রেমিকা: “ফেসবুক বন্ধ করো, জীবন খোলো!”');
+D.cash.push('টাকা গুনতে গুনতে বিবেক ঘুমিয়ে পড়ল! 😴');
+D.kid.push('ডাক্তার: “দাম বেশি পাবে না, কিন্তু সাইজ ভালো!” 😅');
+OB.rick.push('রিকশাওয়ালা: “মামা, ইউ-টার্ন নিমু!” — ধাক্কা!');
+OB.bus.push('হেল্পার: “সামনে যান, জায়গা আছে!” — জায়গা নাই!');
+OB.bar.push('স্পিড ব্রেকারে হোঁচট! “ডাক্তার ডাকো!”');
+OB.ban.push('ব্যানারে লেখা: “চাকরি পরীক্ষা কাল, প্রশ্ন আজ!”');
+OB.dal.push('দালাল: “ভাই, ভাইভা বোর্ডকে আমি চিনি!” 🕴️');
+OB.gfc.push('ছলনাময়ী: “ফোন চার্জে ছিল জান!” — ব্লক!');
+OB.pol.push('নেতা: “আমাদের ছেলেদের আগে চাকরি!” — তুমি লাইনের পেছনে!');
+PRO.push('নানি: “নাতি আমার সাহেব হবে!”','রিকশাওয়ালা: “মামা, এখন তো স্যার!”','চায়ের দোকানদার: “বাকি টাকা দিয়ে দিন স্যার!”');
+EV.push(['🧓 নানি: “বাবু, ভাত না খেয়ে পড়ো না!”',['ভাত খাই (+১ ❤️, -১০ মেধা)',()=>{st.l=Math.min(5,st.l+1);st.k=Math.max(0,st.k-10)}],['পড়ি নানি! (+১৫ মেধা)',()=>{st.k+=15}]],['🏛️ ভাইভা স্যার: “আপনার শখ কী?”',['বই পড়া 📚 (+২০ মেধা)',()=>{st.k+=20}],['ফেসবুক চালানো 📱 (-১ ❤️)',()=>{st.l--}]],['📞 বস: “কাল আসবেন, বেতন নাই, অভিজ্ঞতা পাবেন!”',['যাব! (+১০ মেধা, শিল্ড)',()=>{st.k+=10;st.sh=4}],['বেতন কত? (-১০ মেধা, +১ ❤️)',()=>{st.k=Math.max(0,st.k-10);st.l=Math.min(5,st.l+1)}]]);
+COM.push('📺 ব্রেকিং: চাকরির বাজারে ১ লাখ আবেদন, পদ ১০টা!','👨 বাবা: “রেজাল্ট কবে? পাড়ায় মিষ্টি বিলাব!”','🧓 পাড়ার চাচা: “আমাদের সময় ঘুষ ছাড়াই চাকরি হতো!” (মিথ্যা)','📱 ফেসবুক: “সরকারি চাকরি পেয়েছি!” — ৫০০ লাইক, আসলে ফাঁকা!','🎙️ কোচিং স্যার: “এই সাজেশন ৯৯% কমন, বাকি ১% ভাগ্য!”');
+D.book=['📚','বই',0,'বই পেলাম! মেধা বাড়ল','গাইড বই! ২০০ টাকা গেল','একটু পড়লাম!'];
+D.light=['💡','প্রেমিকার লাইট',0,'ছাদের আলোয় পড়া! মেধা বাড়ল','মশার কামড়, তবু পড়া!'];
+D.jhari=['🗯️','ঝাড়ি',0,'ঝাড়ি খেয়ে শিল্ড চালু!','প্রেমিকা: পড়তে বস!'];
+D.cash=['💰','ঘুষ',1,'ঘুষের টাকা জমছে','বিবেক ঘুমাচ্ছে!'];
+D.kid=['🫘','কিডনি',1,'কিডনি বেচলাম! লাইফ গেল','একটাই তো লাগে!'];
+D.tea=['☕','চা',0,'চা খেয়ে টার্বো!','এক কাপ চা, সব ঠিক!'];
+D.kacchi=['🍛','কাচ্চি',0,'কাচ্চি ডেট! লাইফ বাড়ল','কাচ্চি খেয়ে চাঙ্গা!'];
+D.fb=['📱','ফেসবুক',1,'ফেসবুক! সব উল্টা!','এক মিনিট, তিন ঘণ্টা!'];
+OB.rick=['রিকশার ধাক্কা!','মামা বলে, দেখে চলেন!'];OB.bus=['বাসের ধাক্কা!','হেল্পার: সামনে যান!'];
+OB.bar=['জ্যামে আটকে গেলাম!','সেশনজট! ডিগ্রি ৮ বছর!'];OB.ban=['প্রশ্নফাঁস! পরীক্ষা বাতিল!','ফেসবুকে প্রশ্ন ভারাল!'];
+OB.dal=['দালাল টাকা নিয়ে পালাল!','চাকরি ফিক্স! টাকা গায়েব!'];OB.gfc=['ছলনাময়ী! টাকা নিয়ে ব্লক!','জান বলে, ভাই বলল!'];OB.pol=['নেতার মিছিলে আটকা!','নেতা: ভোট দাও ভাই!'];
+COM.length=0;COM.push('👩 প্রেমিকা: ছবি পাঠাও!','👨 বাবা: ডিসি হবে আমার ছেলে!','🛺 মামা: ভাই, সরেন!','👵 মা: আগে ভাত খা!','🧑‍🏫 স্যার: একশো ভাগ কমন!','🕴️ দালাল: রেট এখন দুই লাখ!','🧓 চাচা: বিয়ে কবে?','📺 ব্রেকিং: ঢাকায় জ্যাম!','📱 ফেসবুক: লাইক দিলে ক্যাডার!','👵 দাদি: নাতি ম্যাজিস্ট্রেট হবে!','🍵 চাওয়ালা: বাকি দিন ভাই!');
+PRO.length=0;PRO.push('মেয়ের বাবা: উন্নতি করছে!','প্রেমিকা: এবার ভালো!','মামা: আগে চিনতাম!','রিকশাওয়ালা: এখন স্যার!','নানি: সাহেব হবে!');
+function speak(s,p){if(mute||!window.speechSynthesis)return;try{let x=s.replace(/[^\u0980-\u09FF0-9a-zA-Z ,।?!:]/g,' ').replace(/\s+/g,' ').trim();if(!x)return;if(!p&&speechSynthesis.speaking)return;VO=VO||pickV();const bn=VO&&/^bn/i.test(VO.lang);if(!bn)x=x.replace(/[\u0980-\u09FF]/g,c=>String.fromCharCode(c.charCodeAt(0)-128));speechSynthesis.cancel();setTimeout(()=>{const u=new SpeechSynthesisUtterance(x);u.lang=bn?'bn-BD':'hi-IN';if(VO)u.voice=VO;speechSynthesis.speak(u)},60)}catch(e){}}
+function toast(s,p){const t=$('toast');t.textContent=s;t.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>t.style.opacity=0,2200);speak(s,p)}
+D.kacchi=['🧿','মায়ের দোয়া',0,'মা: “বাবা, দোয়া করছি, এবার হবে!” +১ ❤️','দাদির তাবিজ কাজ করল! নতুন প্রাণ ❤️','বাবার বকানিতেও যা হয়নি, মায়ের দোয়ায় হলো! +১ ❤️'];
+D.ilish=['📖','সাজেশন',0,'কোচিং স্যারের ১০০% কমন সাজেশন! (মেধা +৮)','“এইবার প্রশ্ন এখান থেকেই!” — গত ১০ বছর ধরে একই কথা','সাজেশন পেলাম, বইয়ে নাই, তবু ভালো লাগল!'];
+D.tea=['☕','চা',0,'চা-ওয়ালা: “বাকির খাতায় লেখা থাকল!” টার্বো! ⚡','এক চুমুকে ঘুম উধাও, পায়ে টার্বো!','চায়ের কাপে তুফান, পায়ে রকেট!'];
+D.book=['📚','বই',0,'গাইড বই! ২০০ টাকা গেল, মেধা বাড়ল','১ পাতা পড়লাম, ঘুম এল, তবু মেধা বাড়ল!','পাশের বাসার ভাইয়ার পুরনো নোট পেলাম!'];
+D.jhari=['🗯️','ঝাড়ি',0,'প্রেমিকা: “চাকরি নাই, বিয়ে নাই, ঝাড়ি ফ্রি!” শিল্ড চালু!','ঝাড়ির ভয়ে রিকশাও সরে গেল! 😂','মেয়ের ঝাড়ি কোচিংয়ের লেকচারের চেয়ে কার্যকর!'];
+D.light=['💡','প্রেমিকার লাইট',0,'প্রেমিকা ছাদ থেকে টর্চ মারল: “পড়ো!” মেধা বাড়ল','লাইটের আলোয় পড়া, মশার কামড় ফ্রি! 🦟','লোডশেডিংয়েও প্রেমিকার লাইট জ্বলে — কারণ ইউপিএস!'];
+D.cash=['💰','ঘুষ',1,'“স্যার, একটু চা-পানি…” টাকা জমল, বিবেক গেল!','বিবেক: “ভাই, আমি চললাম!” 💰','টাকা গুনছো, মা দেখছেন! 😳'];
+D.kid=['🫘','কিডনি',1,'ডাক্তার: “ভাই, এটা সিমের বিচি না!” লাইফ গেল','একটাই তো লাগে! বাকিটা রেখে দিলাম 😅','দালালের কমিশন কিডনির চেয়েও বেশি!'];
+D.fb=['📱','ফেসবুক',1,'“১ মিনিট দেখি” — ৩ ঘণ্টা পর! সব উল্টা 🙃','কাজিনের বিয়ের ছবি দেখতে গিয়ে মাথা ঘুরছে! 🙃','রিলস দেখতে দেখতে রাস্তা উল্টা! 🙃'];
+const SH=['মামা, বিয়ে কবে? 🍚','মামা, এত পড়ে কী হবে? আয়, মেয়ে দেখতে যাই! 👰','মামা, চাকরি পাইলে দাওয়াত দিয়েন!','মামা, ক্যাডার হইয়া পাড়ার নাম রাখিয়েন!','ও মামা, মেয়ে রেডি, আপনি রেডি?'];
+function shout(){const c=crowd.filter(p=>p.position.z<player.position.z-14&&p.position.z>player.position.z-45)[0]||crowd[0];const tx=SH[Math.random()*SH.length|0];const cv=document.createElement('canvas');cv.width=512;cv.height=160;const x=cv.getContext('2d');x.fillStyle='#fff';x.beginPath();if(x.roundRect)x.roundRect(4,4,504,120,24);else x.rect(4,4,504,120);x.fill();x.fillStyle='#222';x.font='bold 34px "Hind Siliguri",sans-serif';x.textAlign='center';x.fillText(tx,256,76,480);const s=new T3.Sprite(new T3.SpriteMaterial({map:new T3.CanvasTexture(cv),transparent:true}));s.scale.set(5,1.56,1);s.position.set(0,3.4,0);c.add(s);setTimeout(()=>c.remove(s),3500);if(/বিয়ে/.test(tx))speak(tx,0,'m')}
+GAL.length=0;GAL.push('বেকার ফকিন্নি! তকে বিয়ে করব না!','রিকশার হেলপার? ফকিন্নি! তকে বিয়ে করব না!','পিয়ন? ফকিন্নি! তকে বিয়ে করব না!','পরের দোকানের কর্মচারী? ফকিন্নি! তকে বিয়ে করব না!','ডেলিভারিম্যান? ফকিন্নি! তকে বিয়ে করব না!','টিউশনির মাস্টর? ফকিন্নি! তকে বিয়ে করব না!','প্রাইমারির স্যার? ফকিন্নি! তকে বিয়ে করব না!','টাকা গুনিস, পকেট ফাঁকা! ফকিন্নি! তকে বিয়ে করব না!','টাই পরলেই সাহেব? ফকিন্নি! তকে বিয়ে করব না!','ফাইল নড়ে না, তুই ফকিন্নি! তকে বিয়ে করব না!','এসআই? আগে ক্যাডার হ! ফকিন্নি! তকে বিয়ে করব না!','অন্যের কর ধরিস! ফকিন্নি! তকে বিয়ে করব না!','ক্যাডার হতে পারলি না! ফকিন্নি! তকে বিয়ে করব না!');
+GAL.length=0;GAL.push('তুই একটা ফকিন্নি! বেকার ভিখারি, তকে বিয়ে করব না!','রিকশার হেলপার? তুই একটা ফকিন্নি! যা, রিকশার হ্যান্ডেল ধর গিয়া, তকে বিয়ে করব না!','পিয়ন? চায়ের কাপ বওয়া ছাড়া তুই কিছু পারিস? ফকিন্নি কোথাকার, তকে বিয়ে করব না!','পরের দোকানে মাল গুনিস, আমারে খাওয়াবি কী দিয়ে? তুই একটা ফকিন্নি, তকে বিয়ে করব না!','অন্যের পার্সেল পৌঁছাস, আমার জন্য আনবি কী? হাওয়া? ফকিন্নি! তকে বিয়ে করব না!','দুই হাজারের টিউশনি করে বিয়ের শখ? তুই একটা ফকিন্নি মাস্টর, তকে বিয়ে করব না!','প্রাইমারির স্যার! বেতনে ডাল-ভাতও জোটে না, তুই ফকিন্নি! তকে বিয়ে করব না!','অন্যের টাকা গুনিস আর নিজের পকেট ফাঁকা! তুই একটা ফকিন্নি, তকে বিয়ে করব না!','টাই পরলেই সাহেব হয় না রে! তুই একটা ফকিন্নি এক্সিকিউটিভ, তকে বিয়ে করব না!','ফাইল নড়াতে বছর পার, আমার জন্য সময় কই? ফকিন্নি কেরানি! তকে বিয়ে করব না!','এসআই হয়ে আমারে ধরবি? আগে ক্যাডার হ, তুই একটা ফকিন্নি! তকে বিয়ে করব না!','অন্যের কর ধরিস, নিজের কপাল ধরতে পারিস না! ফকিন্নি! তকে বিয়ে করব না!','ক্যাডার হতে পারলি না, তুই একটা ফকিন্নি অফিসার! তকে বিয়ে করব না!');
+SH.length=0;SH.push('কী ভাই, বিয়ে কবে করতেছেন? 🍚','মামা, বিয়ে কবে? 🍚','মামা, পড়ে কী হবে? মেয়ে দেখতে যাই! 👰','চাকরি পাইলে দাওয়াত দিয়েন!','মামা, মেয়ে রেডি!');
+speak=function(s,p,g){if(!g||mute||!window.speechSynthesis)return;try{let x=s.replace(/[^\u0980-\u09FF0-9a-zA-Z ,।?!:]/g,' ').replace(/\s+/g,' ').trim();if(!x)return;if(!p&&speechSynthesis.speaking)return;VO=VO||pickV();const bn=VO&&/^bn/i.test(VO.lang);if(!bn)x=x.replace(/[\u0980-\u09FF]/g,c=>String.fromCharCode(c.charCodeAt(0)-128));speechSynthesis.cancel();setTimeout(()=>{const u=new SpeechSynthesisUtterance(x);u.lang=bn?'bn-BD':'hi-IN';const vs=speechSynthesis.getVoices(),fv=g==='f'&&(vs.filter(v=>/^bn/i.test(v.lang)).find(v=>/female|woman|piya|ananya/i.test(v.name))||vs.filter(v=>v.lang.slice(0,2)===(bn?'bn':'hi')).find(v=>/female|woman|piya|ananya|lekha|google/i.test(v.name)));if(fv||VO)u.voice=fv||VO;u.pitch=g==='f'?1.3:g==='m'?.7:1;u.rate=g==='f'?.78:g==='m'?.95:1;speechSynthesis.speak(u)},60)}catch(e){}};
+gfcScene=function(e){st.run=0;st.cb=0;e.o.position.set(player.position.x,0,player.position.z-1.3);if(e.o.userData.A)e.o.userData.A[1].rotation.z=2.6;beep(900,.25,'sine');const m=st.m,b=$('box');
+ b.innerHTML='<h1>💘 ছলনাময়ী!</h1><p>👩 “I love you জান!” ❤️\n💰 '+m+' টাকা গায়েব · ⏳ ১ বছর গেল!</p><button id="gc">আবার দৌড়! 🏃</button>';
+ $('ov').style.cssText='display:flex;align-items:flex-end;background:rgba(8,10,25,.12)';b.style.maxHeight='50%';speak('I love you জান!',1,'f');
+ $('gc').onclick=()=>{st.m=0;player.position.z=Math.min(0,player.position.z+240);list.forEach(i=>sc.remove(i.o));list=[];nextZ=player.position.z-30;st.jn=job();st.inv=2;$('ov').style.cssText='display:none';b.style.maxHeight='';st.run=1;hud();toast('💔 টাকা গেল, ১ বছর পিছিয়ে গেলে! আবার দৌড়!',1);beep(440,.2)}};
+let slapShake=0,rc=0;const clk=new T3.Clock();
+(function loop(){requestAnimationFrame(loop);const dt=Math.min(clk.getDelta(),.05),t=clk.elapsedTime,pz=player.position.z;
+ if(st.run){st.t+=dt;st.ct-=dt;st.bt=(st.bt===undefined?4:st.bt)-dt;if(st.bt<0){st.bt=5+Math.random()*3;shout()}st.ch=100;if(st.ch<=0){st.ch=0;toast('🪫 চার্জ শেষ! বই বাঁচাতে পারলে না!');end('over')}if(st.ch<25&&!st.lw){st.lw=1;say('🔋 মেধার চার্জ কমছে! বই ধরো!')}if(st.ch>=35)st.lw=0;if(st.ct<0){st.ct=7+Math.random()*4;say(pick(COM))}st.sp=Math.min(21,9-pz*.0095)*(st.boost>0?1.35:1);player.position.z-=st.sp*dt;st.x+=(lanes[st.ln]-st.x)*Math.min(1,dt*(st.rain>0?5:12));player.position.x=st.x;
+  st.vy-=24*dt;st.y=Math.max(0,st.y+st.vy*dt);if(st.y===0)st.vy=0;player.position.y=st.y;st.sl=Math.max(0,st.sl-dt);player.scale.y=st.sl>0?.55:1;
+  st.inv=Math.max(0,st.inv-dt);st.sh=Math.max(0,st.sh-dt);st.boost=Math.max(0,st.boost-dt);st.rev=Math.max(0,st.rev-dt);sh.visible=st.sh>0;player.visible=st.inv<=0||Math.floor(t*14)%2;st.shake=Math.max(0,st.shake-dt);
+  const g=Math.min(2,Math.floor(-pz/(FIN/3)));if(g!==st.stg){st.stg=g;skin(g);toast('📍 নতুন এলাকা: '+ST[g].n)}
+  if(st.ev<EVD.length&&-pz>EVD[st.ev])ev();const jn=job();if(jn!==st.jn){if(st.jn){promo(jn)}st.jn=jn}st.dt-=dt;if(st.dt<0){st.dt=22+Math.random()*8;st.dark=5;say('💡 লোডশেডিং! এবার প্রেমিকার লাইটই ভরসা!');speak('লোডশেডিং! এবার প্রেমিকার লাইটই ভরসা!',1,'n')}st.dark=Math.max(0,st.dark-dt);hemi.intensity=st.dark>0?.8:1.15;sc.fog.far=st.dark>0?130:200;
+  st.rt=(st.rt===undefined?25:st.rt)-dt;if(st.rt<0){st.rt=35+Math.random()*10;st.rain=10;say('🌧️ বৃষ্টি শুরু! রাস্তা পিচ্ছিল, লেন বদলাতে দেরি হবে!')}st.rain=Math.max(0,(st.rain||0)-dt);rain.visible=st.rain>0;if(rain.visible){rain.position.set(0,0,pz-8);const a=rg.attributes.position;for(let i=0;i<300;i++){let y=a.getY(i)-25*dt;if(y<0)y+=12;a.setY(i,y)}a.needsUpdate=true}
+  while(nextZ>pz-90&&-nextZ<FIN-10){spawn(nextZ);if(Math.random()<-nextZ/2200)spawn(nextZ-9);nextZ-=Math.max(11,20+pz*.008)}
+  for(let i=list.length-1;i>=0;i--){const e=list[i];if(e.k==='gfc'&&e.o.userData.A)e.o.userData.A[1].rotation.z=2.6+Math.sin(t*6)*.4;if(e.t==='o'&&!e.bl&&pz-e.z<22&&pz-e.z>0&&(e.k==='rick'||e.k==='bus')){e.bl=1;beep(e.k==='bus'?180:1300,.3)}if(e.t==='o'&&!e.all){if(e.v){e.z+=e.v*dt;e.o.position.z=e.z}if(e.sw){const df=pz-e.z;if(df<26&&df>7){e.sc=(e.sc||0)-dt;if(e.sc<0){e.sc=1.1;e.ln=Math.max(0,Math.min(2,e.ln+(Math.random()<.5?-1:1)))}}e.o.position.x+=(lanes[e.ln]-e.o.position.x)*Math.min(1,dt*6)}}if(e.t==='c'){e.o.position.y=1.6+Math.sin(t*4+i)*.15}
+   if(!e.dead&&Math.abs(e.z-pz)<e.d+.5&&(e.all||e.ln===st.ln)){if(e.t==='c')hit(e);else if(!e.hitd){e.hitd=1;hit(e)}}
+   if(e.dead||e.z>pz+12){if(!e.dead)sc.remove(e.o);list.splice(i,1)}}
+  if(st.run&&-pz>=FIN)end('end');hud()}
+ swing(player,st.run?Math.sin(t*14)*.8:0);if(st.run&&st.y<.05)player.position.y=Math.abs(Math.sin(t*14))*.1;
+ swing(gf,Math.sin(t*2)*.1);crowd.forEach((p,i)=>{p.userData.A[1].rotation.z=2.5+Math.sin(t*8+i)*.5;p.userData.A[0].rotation.z=-2.5-Math.sin(t*8+i)*.5;if(p.position.z>pz+12)p.position.z-=204});bulb.scale.setScalar(1+Math.sin(t*5)*.1);
+ if(wd){const u=wedG.userData;if(wd==='shoe'){u.b.userData.A[1].rotation.x=-1.8+Math.sin(t*16)*.9;player.position.y=Math.abs(Math.sin(t*16))*.25;player.rotation.z=Math.sin(t*16)*.15;swing(u.f,Math.sin(t*6)*.2)}else if(false){const A=u.b.userData.A[1],ph=(t*.9)%1,cy=Math.floor(t*.9);const th=ph<.5?1.5*(ph/.5):ph<.6?1.5-2.3*((ph-.5)/.1):-.8*(1-(ph-.6)/.4);A.rotation.set(-1.45,0,th);u.b.userData.A[0].rotation.x=-.3;
+ if(ph>=.55&&u.hc!==cy){u.hc=cy;slapShake=.35;rc=1;burst(player.position.x,1.9,pz,0xff4444);beep(120,.18,'sawtooth');beep(380,.06,'square');const sl=$('slap');sl.style.opacity=1;sl.style.transform='translate(-50%,0) scale(1.25) rotate(-8deg)';setTimeout(()=>{sl.style.opacity=0;sl.style.transform='translate(-50%,0) scale(.6) rotate(-8deg)'},600)}
+ rc=Math.max(0,rc-dt*2.5);player.rotation.z=.4*rc;player.position.x=-.45-.18*rc;player.position.y=0;swing(u.f,Math.sin(t*6)*.2)}else if(wd==='good'){u.f.userData.A[0].rotation.x=u.f.userData.A[1].rotation.x=-1.4;u.b.position.y=Math.abs(Math.sin(t*5))*.12;player.position.y=Math.abs(Math.sin(t*6))*.2;if(Math.random()<.2)burst(Math.random()*3-.5,2.5,pz,[0xffd23f,0xff5555,0x55ff99][Math.random()*3|0])}else{swing(u.b,Math.sin(t*3)*.1);swing(u.f,0)}}
+ par.forEach(p=>{const u=p.userData;if(u.t>0){u.t-=dt;u.v.y-=12*dt;p.position.addScaledVector(u.v,dt)}else p.position.y=-9});
+ road.position.z=pz-100;grass.position.z=pz-100;edges.forEach(e=>e.position.z=pz-100);dashes.forEach(d=>{if(d.position.z>pz+10)d.position.z-=240});blds.forEach(b=>{if(b.position.z>pz+12)b.position.z-=208});trees.forEach(b=>{if(b.position.z>pz+12)b.position.z-=208});
+ const sk=st.shake>0?(Math.random()-.5)*.4:0;if(wd){const cx=.6,k2=slapShake>0?(Math.random()-.5)*slapShake:0;slapShake=Math.max(0,slapShake-dt);cam.position.set(cx+k2,2.1+k2,pz+5.5);cam.lookAt(cx,1.4,pz)}else{cam.position.set(st.x*.5+sk,5.4+st.y*.4,pz+9.5);cam.lookAt(st.x*.5,1,pz-9)}r.render(sc,cam)})();
+skin(0);
+
+/* ===== v4 patch ===== */
+$('go').onclick=start;
+document.head.insertAdjacentHTML('beforeend','<style>#toast{white-space:pre-line}</style>');
+$('msg').textContent='চোর থেকে শুরু করে ধাপে ধাপে BCS ক্যাডার! সদরঘাট থেকে সচিবালয় — ঢাকার আসল রাস্তা ধরে দৌড়াও। পথে ছলনাময়ী, এক্স, সেলফি গ্যাং, খোলা ম্যানহোল, জলাবদ্ধতা, উল্টো পথের বাইক, সিএনজি আর হকার! ছোট চাকরি পেলে প্রেমিকার ঝাড়ি আর মেয়ের বাবার গালি ফ্রি! 😅';
+/* clear the grey road ahead */
+sc.fog.near=70;sc.fog.far=200;road.material.color.set(0x55555f);edges[2].material.color.set(0xd8c8a0);edges[3].material.color.set(0xd8c8a0);
+ST[0].n='পুরান ঢাকা–পল্টন';ST[1].n='ফার্মগেট–ধানমন্ডি–নীলক্ষেত কোচিং পাড়া';ST[2].n='শাহবাগ–সচিবালয় অফিসপাড়া';ST[2].sky=0xf0a898;
+/* jobs: chor -> BCS cadre */
+JOBS.length=0;[[0,'🦹 চোর'],[70,'🛺 রিকশার হেলপার'],[140,'🧹 অফিস পিয়ন'],[210,'📦 ডেলিভারিম্যান'],[280,'🏪 দোকান কর্মচারী'],[350,'🎓 প্রাইভেট টিউটর'],[430,'📚 প্রাইমারি শিক্ষক'],[520,'🏦 ব্যাংক কর্মকর্তা'],[620,'🏢 সরকারি কেরানি'],[730,'👮 পুলিশের এসআই'],[850,'🧾 কর অফিসার'],[980,'🎖️ নন-ক্যাডার অফিসার'],[1100,'🏛️ BCS ক্যাডার']].forEach(a=>JOBS.push(a));
+GAL[0]='চোর? তোর সাথে বিয়ে দিলে থানায় কার্ড যাবে! ফকিন্নি, তকে বিয়ে করব না!';
+const DAD=['চোরের সাথে মেয়ে বিয়ে দিমু? আগে থানায় যা!','আমার মেয়ে রিকশার হেলপারের বউ হবে? বের হ বাড়ির সামনে থেকে!','পিয়নের কাছে মেয়ে দিলে সমাজে মুখ দেখামু কেমনে?','অন্যের পার্সেল পৌঁছাস, আমার মেয়েরে পৌঁছাইবি কেমনে? আগে চাকরি ধর!','দোকানের বেতনে মেয়ের শাড়ির দামও ওঠে না!','টিউশনি দিয়া সংসার চলে? পাড়ার লোক কী বলবে!','প্রাইমারির স্যার? আমার মেয়ে ক্যাডার ছাড়া ভাবেই না!','ব্যাংকের চাকরি, তবু ক্যাডার না হলে সম্মান নাই!','কেরানি? ফাইল নড়াইতে নড়াইতে বুড়া হইয়া যাবি!','এসআই? আত্মীয়দের সামনে বলতে লজ্জা লাগে! আগে ক্যাডার হ!','অন্যের ট্যাক্স ধরিস, জামাই হওয়ার যোগ্যতা ধরতে পারিস না!','আর একটু হইলেই ক্যাডার হইতি! এইটুকুর জন্য মেয়ে দিমু না!'];
+function promo(jn){const ix=JOBS.indexOf(jn);if(ix>=12){toast('🎉 BCS ক্যাডার! মেয়ের বাবা মিষ্টি নিয়ে দৌড়ে আসছেন! 🍬',1);beep(880,.3,'sine');speak('বিসিএস ক্যাডার! মেয়ের বাবা মিষ্টি নিয়ে আসছেন!',1,'n');return}
+ beep(200,.3,'sawtooth');toast('💼 নতুন চাকরি: '+jn[1],1);clearTimeout(toastT);toastT=setTimeout(()=>$('toast').style.opacity=0,2500)}
+function bub(g,tx){const cv=document.createElement('canvas');cv.width=512;cv.height=256;const x=cv.getContext('2d');x.font='bold 32px "Hind Siliguri",sans-serif';const ln=[];let c='';tx.split(' ').forEach(w=>{if(c&&x.measureText(c+' '+w).width>470){ln.push(c);c=w}else c=c?c+' '+w:w});ln.push(c);x.fillStyle='#fff';x.fillRect(4,4,504,ln.length*42+30);x.fillStyle='#b71c1c';x.textAlign='center';ln.forEach((l,i)=>x.fillText(l,256,48+i*42));const s=new T3.Sprite(new T3.SpriteMaterial({map:new T3.CanvasTexture(cv),transparent:true}));s.scale.set(5.6,2.8,1);s.position.set(0,4.2,0);g.add(s)}
+fin=function(h,s){const ji=Math.min(11,Math.max(0,JOBS.indexOf(job()))),ty=/মেধায়|প্রেমিকাই/.test(h)?'good':/ঘুষে|ভাইভায়/.test(h)?'mid':'shoe';wed(ty);const gl=GAL[ji],dl=DAD[ji];
+ const L={good:'👨 মেয়ের বাবা সুন্দরী মেয়েকে নিয়ে এসে তোমার হাতে তুলে দিলেন: “আজ থেকে ও তোমার!” 💍',mid:'👰 মেয়ে মোটামুটি রাজি।\n👨 বাবা: “'+dl+'”',shoe:'👞 মেয়ে জুতা হাতে তেড়ে এসে জুতা-পেটা শুরু করল!\n👩 “'+gl+'”\n👨 বাবা: “'+dl+'”'};
+ const jb=ty==='good'?'🏛️ BCS ক্যাডার':/ঘুষে/.test(h)?'🏢 ঘুষের চাকরি':JOBS[ji][1];
+ $('box').innerHTML='<h1>'+h+'</h1><p>💼 চাকরি: <b>'+jb+'</b>\n'+L[ty]+'\n\n'+s+'</p><button id="go">আবার চেষ্টা!</button>';$('box').style.maxHeight='50%';$('go').onclick=start;$('ov').style.cssText='display:flex;align-items:flex-end;background:rgba(8,10,25,.12)';
+ if(ty!=='good')bub(wedG.userData.f,'বাবা: '+dl);if(ty!=='good')speak(dl,1,'m')};
+/* funny relatable obstacles */
+const NW=(c,sh)=>{const g=new T3.Group();ad(g,new C(c[0],c[0],.08,18),c[1],0,.05,0,null,c[2]||0);return g};
+function wh(g,x,z,r){wheel(g,x,r,z,r)}
+const NB={ex:()=>person({shirt:0xd81b60,pants:0x111111,girl:1,dup:0xffd23f,skin:0xe0b08a}),
+ sel:()=>{const g=new T3.Group(),a=person({shirt:0x8e44ad,pants:0x111111,girl:1,dup:0xffffff,skin:0xe0b08a}),b=person({shirt:0x16a085,pants:0x111111,girl:1,dup:0xffffff,skin:0xd9a074});a.position.x=-.55;b.position.x=.55;g.add(a,b);return g},
+ hole:()=>{const g=NW([.9,0x050505]);ad(g,new C(1.05,1.05,.05,18),0xffd23f,0,.03,0);return g},
+ pud:()=>NW([1.5,0x4f86b5,0x112233]),
+ cng:()=>{const g=new T3.Group();ad(g,new B(1.3,1.1,2.2),0x2e8b57,0,.9,0);ad(g,new B(1.2,.1,1.5),0xf1c40f,0,1.5,-.2);wh(g,-.7,-.7,.35);wh(g,.7,-.7,.35);wh(g,0,.9,.35);return g},
+ bike:()=>{const g=new T3.Group();ad(g,new B(.35,.5,1.7),0x222222,0,.6,0);wh(g,0,-.7,.35);wh(g,0,.7,.35);const p=person({shirt:0xc0392b,pants:0x333333});p.scale.set(.8,.8,.8);p.position.set(0,.3,-.1);p.rotation.y=Math.PI;g.add(p);return g},
+ hawk:()=>{const g=new T3.Group();ad(g,new B(1.6,.7,1.1),0xc68642,0,.8,0);ad(g,new B(.08,1.4,.08),0x555555,0,1.9,0);ad(g,new C(0,1.2,.5,10),0xe74c3c,0,2.7,0);wh(g,-.7,.5,.3);wh(g,.7,.5,.3);return g}};
+const NL={ex:[.9,['💌','এক্স']],sel:[1.3,['🤳','সেলফি গ্যাং']],hole:[.9,['🕳️','খোলা ম্যানহোল']],pud:[1.3,['🌊','জলাবদ্ধতা']],cng:[1.7,['🛺','সিএনজি']],bike:[1.1,['🏍️','উল্টো বাইক']],hawk:[1.3,['🥟','ফুটপাতের হকার']]};
+OB.ex=['💌 এক্স: “জান, আমার বিয়েতে দাওয়াত রইল!” — বুকে ধাক্কা!','এক্স: “তুমি এখনো চাকরি পাওনি? আমার হাজব্যান্ড তো ডিসি!”'];
+OB.sel=['🤳 “ভাইয়া, একটা ছবি তুলে দেন” — ১০টা তুললেন, তবু ঝাপসা!','সেলফি গ্যাং: “ভাইয়া ফ্ল্যাশ অন করেন!” — সময় শেষ!'];
+OB.hole=['🕳️ খোলা ম্যানহোলে পা! ঢাকার ফুটপাত — ডাক্তার ডাকো!','সিটি কর্পোরেশন: “ঢাকনা কাল লাগানো হবে” (৩ বছর ধরে)'];
+OB.pud=['🌊 এক পশলা বৃষ্টি, কোমর পানি! জুতা ভাসছে!','জলাবদ্ধতা: “মামা, নৌকা লাগবে!”'];
+OB.cng=['🛺 সিএনজি: “মিটারে যামু না, ডাবল দেন!” — ধাক্কা!','সিএনজিওয়ালা: “যাইতাম না ভাই, ওইদিকে জ্যাম!”'];
+OB.bike=['🏍️ উল্টো পথে বাইক! “ভাই সাইড দেন, আমি আর্জেন্ট!”','বাইকার: “ফুটপাতে উঠছি তো কী হইছে?”'];
+OB.hawk=['🥟 হকার: “ভাই, ৩টা ১০০!” — আটকে গেলে!','হকারের ঠেলাগাড়িতে ধাক্কা — তুমি লাইনের পেছনে!'];
+const sp0=spawn;spawn=function(z){sp0(z);if(Math.random()<.55){const k=pick(['ex','sel','hole','pud','cng','bike','hawk','ex','sel']),l=NL[k];addO(k,NB[k](),Math.random()*3|0,z-10,l[0],l[1]);if(k==='bike')list[list.length-1].v=9}};
+const h0=hit;hit=function(e){if(e.t==='o'&&(e.k==='hole'||e.k==='pud')&&(st.y>.5||st.inv>0))return;h0(e)};
+/* Dhaka map route: Sadarghat -> Secretariat */
+RD.length=0;[[0,'সদরঘাট (পুরান ঢাকা)',23.708,90.407],[80,'গুলিস্তান',23.7285,90.4128],[160,'মতিঝিল',23.733,90.4172],[240,'পল্টন',23.734,90.4105],[320,'কাকরাইল',23.7388,90.413],[400,'মগবাজার',23.7485,90.4046],[460,'বাংলামোটর',23.7466,90.3929],[520,'কারওয়ান বাজার',23.751,90.3915],[580,'ফার্মগেট',23.7575,90.3896],[640,'পান্থপথ',23.7456,90.3857],[700,'ধানমন্ডি',23.7515,90.374],[750,'সায়েন্সল্যাব',23.7389,90.3835],[790,'নীলক্ষেত',23.733,90.388],[850,'শাহবাগ',23.739,90.3957],[960,'সচিবালয়',23.7305,90.4073]].forEach(a=>RD.push(a));
+const mm=document.createElement('canvas');mm.width=mm.height=120;mm.style.cssText='position:absolute;left:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);width:104px;height:104px;border-radius:12px;background:rgba(15,20,45,.7);border:1px solid #ffd23f;pointer-events:none';document.body.appendChild(mm);
+const mx=mm.getContext('2d'),MP=a=>[12+(a[3]-90.372)*.915*1650,112-(a[2]-23.704)*1650];
+function drawMap(){mx.clearRect(0,0,120,120);mx.strokeStyle='#ffd23f';mx.lineWidth=2;mx.beginPath();RD.forEach((a,i)=>{const p=MP(a);i?mx.lineTo(p[0],p[1]):mx.moveTo(p[0],p[1])});mx.stroke();mx.fillStyle='#fff';RD.forEach(a=>{const p=MP(a);mx.fillRect(p[0]-1.5,p[1]-1.5,3,3)});const d=-player.position.z;let i=0;RD.forEach((a,j)=>{if(d>=a[0])i=j});const a=RD[i],b=RD[Math.min(i+1,RD.length-1)],t=b===a?0:Math.min(1,(d-a[0])/(b[0]-a[0])),pa=MP(a),pb=MP(b);mx.fillStyle='#ff4d4d';mx.beginPath();mx.arc(pa[0]+(pb[0]-pa[0])*t,pa[1]+(pb[1]-pa[1])*t,4,0,7);mx.fill();mx.fillStyle='#fff';mx.font='10px sans-serif';mx.fillText('🗺️ ঢাকা',4,11)}
+const hd0=hud;hud=function(){hd0();drawMap()};drawMap();
+</script></body></html>
